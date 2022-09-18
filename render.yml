@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: sdnoder
+    env: go
+    repo: https://github.com/rockynh/sdnoder.git
+    buildCommand: "go build -tags netgo -ldflags '-s -w'"
+    startCommand: "./gostHeroku -L=$PROTOCOL://$USERPASS@:$PORT"
+    envVars:
+      - key: PROTOCOL
+        alue: 'ws'
+      - key: $USERPASS
+        sync: false
