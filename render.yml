@@ -3,10 +3,10 @@ services:
     name: sdnoder
     env: go
     repo: https://github.com/rockynh/sdnoder.git
-    buildCommand: "go build -tags netgo -ldflags '-s -w'"
-    startCommand: "./gostHeroku -L=$PROTOCOL://$USERPASS@:$PORT"
+    buildCommand: "go build -tags netgo -ldflags '-s -w -o sdnoder'"
+    startCommand: "./sdnoder -L=$PROTOCOL://$USERPASS@:$PORT"
     envVars:
       - key: PROTOCOL
-        alue: 'ws'
-      - key: $USERPASS
+        value: 'ws'
+      - key: USERPASS
         sync: false
