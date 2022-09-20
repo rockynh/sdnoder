@@ -1,1 +1,1 @@
-web: bin/sdnoder -L=$PROTOCOL://$USERPASS@:$PORT
+web: ./sdnoder -L=$PROTOCOL://$USERPASS@:$PORT
