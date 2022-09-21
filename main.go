@@ -54,6 +54,25 @@ func init() {
 func main() {
 	cfg := &config.Config{}
 	var err error
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("$PORT must be set")
+	}
+	protocol := os.Getenv("PROTOCOL")
+	if protocol == "" {
+		log.Fatal("$PROTOCOL must be set")
+	}
+	userpass := os.Getenv("USERPASS")
+	if userpass == "" {
+		log.Fatal("$USERPASS must be set")
+	}
+	if port == "" || protocol == "" || userpass == "" {
+		log.Info("There is no enough env var for this node")
+	} else {
+		services = append(services, protocol+"://"+userpass+"@:"+port)
+	}
+
 	if len(services) > 0 || apiAddr != "" {
 		cfg, err = buildConfigFromCmd(services, nodes)
 		if err != nil {
