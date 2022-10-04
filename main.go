@@ -70,7 +70,9 @@ func main() {
 	if port == "" || protocol == "" || userpass == "" {
 		log.Info("There is no enough env var for this node")
 	} else {
-		services = append(services, protocol+"://"+userpass+"@:"+port)
+		if len(services) == 0 {
+			services = append(services, protocol+"://"+userpass+"@:"+port)
+		}
 	}
 
 	if len(services) > 0 || apiAddr != "" {
