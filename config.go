@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"os"
+	"path/filepath"
 
 	"github.com/go-gost/core/logger"
 	"github.com/go-gost/core/service"
@@ -12,6 +13,7 @@ import (
 	xlogger "github.com/go-gost/x/logger"
 	metrics "github.com/go-gost/x/metrics/service"
 	"github.com/go-gost/x/registry"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 func buildService(cfg *config.Config) (services []service.Service) {
@@ -63,6 +65,14 @@ func buildService(cfg *config.Config) (services []service.Service) {
 		}
 	}
 
+	for _, ingressCfg := range cfg.Ingresses {
+		if h := parsing.ParseIngress(ingressCfg); h != nil {
+			if err := registry.IngressRegistry().Register(ingressCfg.Name, h); err != nil {
+				log.Fatal(err)
+			}
+		}
+	}
+
 	for _, recorderCfg := range cfg.Recorders {
 		if h := parsing.ParseRecorder(recorderCfg); h != nil {
 			if err := registry.RecorderRegistry().Register(recorderCfg.Name, h); err != nil {
@@ -92,7 +102,17 @@ func buildService(cfg *config.Config) (services []service.Service) {
 			}
 		}
 	}
-
+	for _, hopCfg := range cfg.Hops {
+		hop, err := parsing.ParseHop(hopCfg)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if hop != nil {
+			if err := registry.HopRegistry().Register(hopCfg.Name, hop); err != nil {
+				log.Fatal(err)
+			}
+		}
+	}
 	for _, chainCfg := range cfg.Chains {
 		c, err := parsing.ParseChain(chainCfg)
 		if err != nil {
@@ -139,11 +159,23 @@ func logFromConfig(cfg *config.LogConfig) logger.Logger {
 	case "stderr", "":
 		out = os.Stderr
 	default:
-		f, err := os.OpenFile(cfg.Output, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-		if err != nil {
-			log.Warn(err)
+		if cfg.Rotation != nil {
+			out = &lumberjack.Logger{
+				Filename:   cfg.Output,
+				MaxSize:    cfg.Rotation.MaxSize,
+				MaxAge:     cfg.Rotation.MaxAge,
+				MaxBackups: cfg.Rotation.MaxBackups,
+				LocalTime:  cfg.Rotation.LocalTime,
+				Compress:   cfg.Rotation.Compress,
+			}
 		} else {
-			out = f
+			os.MkdirAll(filepath.Dir(cfg.Output), 0755)
+			f, err := os.OpenFile(cfg.Output, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+			if err != nil {
+				log.Warn(err)
+			} else {
+				out = f
+			}
 		}
 	}
 	opts = append(opts, xlogger.OutputLoggerOption(out))

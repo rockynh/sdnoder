@@ -16,6 +16,7 @@ import (
 
 	// Register dialers
 	_ "github.com/go-gost/x/dialer/direct"
+	_ "github.com/go-gost/x/dialer/dtls"
 	_ "github.com/go-gost/x/dialer/ftcp"
 	_ "github.com/go-gost/x/dialer/grpc"
 	_ "github.com/go-gost/x/dialer/http2"
@@ -43,6 +44,7 @@ import (
 	_ "github.com/go-gost/x/handler/forward/remote"
 	_ "github.com/go-gost/x/handler/http"
 	_ "github.com/go-gost/x/handler/http2"
+	_ "github.com/go-gost/x/handler/http3"
 	_ "github.com/go-gost/x/handler/redirect/tcp"
 	_ "github.com/go-gost/x/handler/redirect/udp"
 	_ "github.com/go-gost/x/handler/relay"
@@ -57,11 +59,13 @@ import (
 
 	// Register listeners
 	_ "github.com/go-gost/x/listener/dns"
+	_ "github.com/go-gost/x/listener/dtls"
 	_ "github.com/go-gost/x/listener/ftcp"
 	_ "github.com/go-gost/x/listener/grpc"
 	_ "github.com/go-gost/x/listener/http2"
 	_ "github.com/go-gost/x/listener/http2/h2"
 	_ "github.com/go-gost/x/listener/http3"
+	_ "github.com/go-gost/x/listener/http3/h3"
 	_ "github.com/go-gost/x/listener/icmp"
 	_ "github.com/go-gost/x/listener/kcp"
 	_ "github.com/go-gost/x/listener/mtls"
