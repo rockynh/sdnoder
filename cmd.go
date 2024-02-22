@@ -350,7 +350,8 @@ func buildServiceConfig(url *url.URL) (*config.ServiceConfig, error) {
 			if listener == "tcp" || listener == "udp" ||
 				listener == "rtcp" || listener == "rudp" ||
 				listener == "tun" || listener == "tap" ||
-				listener == "dns" {
+				listener == "dns" || listener == "unix" ||
+				listener == "serial" {
 				handler = listener
 			} else {
 				handler = "forward"
@@ -500,7 +501,7 @@ func buildNodeConfig(url *url.URL) (*config.NodeConfig, error) {
 	delete(m, "secure")
 	delete(m, "serverName")
 
-	if !tlsConfig.Secure && tlsConfig.CertFile == "" && tlsConfig.CAFile == "" {
+	if !tlsConfig.Secure && tlsConfig.CertFile == "" && tlsConfig.CAFile == "" && tlsConfig.ServerName == "" {
 		tlsConfig = nil
 	}
 
